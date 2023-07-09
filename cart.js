@@ -1,4 +1,6 @@
+const app = document.querySelector("#app");
 const productCards = document.querySelector("#productCards");
+const productDetailModal = new bootstrap.Modal("#productDetailModal");
 
 //for Rating
 const star = (num) => {
@@ -23,10 +25,10 @@ const excerpt = (str, maxLength = 60) => {
 
 const createProductCards = (product) => {
   const div = document.createElement("div");
-  div.className = "col-12 col-sm-6 col-md-4 col-lg-3";
+  div.className = "col-12 col-sm-6 col-md-4 col-lg-3 product-card";
   div.setAttribute("product-id", product.id);
   div.innerHTML = `
-    <div class="card product-card mb-3">
+    <div class="card mb-3">
         <div class="card-body">
             <img class="product-img mb-2" src="${product.thumbnail}" alt="">
             <h6 class="fw-bold text-truncate">${product.title}</h6>
@@ -52,6 +54,20 @@ const createProductCards = (product) => {
 };
 
 products.forEach((product) => {
-    console.log(product)
+    // console.log(product)
     productCards.append(createProductCards(product))
+})
+
+//To open Modal Box
+app.addEventListener("click",(event) => {
+    // console.log(event.target)
+    if(event.target.closest(".product-card")){
+        const currentCard = event.target.closest(".product-card");
+        console.log(currentCard.getAttribute("product-id"))
+        const currentId = currentCard.getAttribute("product-id");
+        const currentProduct = products.find(product => product.id == currentId);
+        console.log(currentProduct.title)
+        productDetailModal._element.querySelector(".modal-title").innerText = currentProduct.title ;
+        productDetailModal.show();
+    }
 })
