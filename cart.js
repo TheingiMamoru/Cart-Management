@@ -1,27 +1,28 @@
 const app = document.querySelector("#app");
 const productCards = document.querySelector("#productCards");
+const productCategories = document.querySelector("#productCategories");
 const productDetailModal = new bootstrap.Modal("#productDetailModal");
 
 //for Rating
 const star = (num) => {
-    let starStr = "";
-    for(let i=1; i<=5 ; i++){
-        if(Math.floor(num) >= i){
-            starStr += `<i class="bi bi-star-fill"></i>`;
-        }else{
-            starStr += `<i class="bi bi-star"></i>`;
-        }
+  let starStr = "";
+  for (let i = 1; i <= 5; i++) {
+    if (Math.floor(num) >= i) {
+      starStr += `<i class="bi bi-star-fill"></i>`;
+    } else {
+      starStr += `<i class="bi bi-star"></i>`;
     }
-    return starStr;
+  }
+  return starStr;
 };
 
 //for product description
 const excerpt = (str, maxLength = 60) => {
-    if(str.length > maxLength){
-        return str.substring(0, maxLength) + ".....";
-    }
-    return str;
-}
+  if (str.length > maxLength) {
+    return str.substring(0, maxLength) + ".....";
+  }
+  return str;
+};
 
 const createProductCards = (product) => {
   const div = document.createElement("div");
@@ -34,7 +35,7 @@ const createProductCards = (product) => {
             <h6 class="fw-bold text-truncate">${product.title}</h6>
             <div class="mb-1">
                 <div class="badge bg-info text-white text-capitalize">
-                    ${product.category.replaceAll("-"," ")}
+                    ${slugToText(product.category)}
                 </div>
             </div>
             <div class="mb-1">
@@ -50,24 +51,88 @@ const createProductCards = (product) => {
         </div>
     </div>
     `;
-    return div
+  return div;
 };
 
-products.forEach((product) => {
+//function for - replace
+const slugToText = (slug) => {
+  return slug.replaceAll("-", " ");
+};
+
+//Category Button function
+const createCategoryBtn = (name) => {
+  const btn = document.createElement("button");
+  btn.className = "btn btn-sm btn-outline-dark me-2 text-capitalize cat ";
+  btn.setAttribute("cat", name);
+  btn.innerText = slugToText(name);
+
+  return btn;
+};
+
+//To show productCard function
+const renderProductCard = (products) => {
+  productCards.innerHTML = null;
+  products.forEach((product) => {
     // console.log(product)
-    productCards.append(createProductCards(product))
-})
+    productCards.append(createProductCards(product));
+  });
+};
+
+const renderProductDetail = () => {
+  const currentCard = event.target.closest(".product-card");
+  console.log(currentCard.getAttribute("product-id"));
+  const currentId = currentCard.getAttribute("product-id");
+  const currentProduct = products.find((product) => product.id == currentId);
+  console.log(currentProduct.title);
+  productDetailModal._element.querySelector(".modal-title").innerText =
+    currentProduct.title;
+  productDetailModal.show();
+};
+
+const renderProductCardByCategory = () => {
+  //console.log(event.target.getAttribute("cat"));
+  const currentCategory = event.target.getAttribute("cat");
+  if (currentCategory === "all") {
+    renderProductCard(products);
+  } else {
+    renderProductCard(
+      products.filter((product) => product.category === currentCategory)
+    );
+  }
+  //remove old active
+  productCategories.querySelector(".active").classList.remove("active");
+  //add new active
+  event.target.classList.add("active");
+};
+
+//function for search
+const renderBySearch = (keyword) => {
+  renderProductCard(
+    products.filter((product) => {
+      return (
+        product.title.toLocaleLowerCase().search(keyword.toLocaleLowerCase()) !=
+          -1 || product.description.toLocaleLowerCase().search(keyword.toLocaleLowerCase()) !=
+          -1
+      );
+    })
+  );
+};
+
+//PROCESS
+
+renderProductCard(products);
+
+categories.forEach((category) => {
+  productCategories.append(createCategoryBtn(category));
+});
 
 //To open Modal Box
-app.addEventListener("click",(event) => {
-    // console.log(event.target)
-    if(event.target.closest(".product-card")){
-        const currentCard = event.target.closest(".product-card");
-        console.log(currentCard.getAttribute("product-id"))
-        const currentId = currentCard.getAttribute("product-id");
-        const currentProduct = products.find(product => product.id == currentId);
-        console.log(currentProduct.title)
-        productDetailModal._element.querySelector(".modal-title").innerText = currentProduct.title ;
-        productDetailModal.show();
-    }
-})
+app.addEventListener("click", (event) => {
+  // console.log(event.target)
+  if (event.target.closest(".product-card")) {
+    renderProductDetail();
+  }
+  if (event.target.classList.contains("cat")) {
+    renderProductCardByCategory();
+  }
+});

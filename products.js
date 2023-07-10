@@ -577,3 +577,15 @@ const products = [
     ],
   },
 ];
+
+//products ကို loop ပတ်ပြီး အထဲက category တစ်ခုချင်းစီကို မထပ်ဘဲ categories ထဲကို ဆွဲထည့်တာ Logic နဲ့
+const categories = [...new Set(products.map(product => product.category))];
+
+//products ကို loop ပတ်ပြီး အထဲက category တစ်ခုချင်းစီကို မထပ်ဘဲ categories ထဲကို ဆွဲထည့်တာ Procedures နဲ့
+// for (product of products){
+//     // console.log(product.category)
+//     if(!categories.includes(product.category)){
+//         categories.push(product.category)
+//     }
+// }
+console.log(categories)
