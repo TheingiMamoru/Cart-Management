@@ -17,16 +17,19 @@
   <body>
     <div id="app">
       <div class="container">
-        <div class="row">
+        <div class="row" id="navbar">
           <div class="col-12">
             <div
-              class="d-flex justify-content-between p-3 my-3 border shadow-sm"
+              class="d-flex justify-content-between p-3 my-3 border shadow-sm bg-white" 
             >
               <h3 class="fw-bold">
                 <i class="bi bi-bag-fill"></i>
                 My Shop
               </h3>
-              <button class="btn btn-lg btn-dark">Cart</button>
+              <div class="d-flex">
+                <input type="text" class="form-control me-2" placeholder="Search Products" id="searchInput">
+                <button class="btn btn-dark " id="cart">Cart</button>
+              </div>
             </div>
           </div>
         </div>
